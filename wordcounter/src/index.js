@@ -38,13 +38,13 @@ function ProgressBar({ completion }) {
   );
 }
 
-function Editor({
-  text,
-  onTextChange
-}) {
+function Editor({ text, onTextChange}) {
   function handleChange(event) {
     onTextChange(event.target.value);
   }
+  function handleChange(event){
+        onTextChange(event.target.value);
+   }
   return (
     <div className="flex flex-column mv2">
       <label htmlFor="editor" className="mv2">
@@ -67,6 +67,7 @@ class WordCounter extends React.Component {
     constructor() {
         super();
         this.state = { text: 'Hello There Word Count'};
+        this.handleTextChange = this.handleTextChange.bind(this);
     }
     render() {
         const { targetWordCount } = this.props;
@@ -77,6 +78,7 @@ class WordCounter extends React.Component {
         return (
             <form className="measure pa4 sans-serif">
               <Editor 
+                onTextChange={this.handleTextChange}
                 text={text}
               />
               <Counter count={wordCount} />
@@ -85,6 +87,10 @@ class WordCounter extends React.Component {
         
         );
     } 
+    
+    handleTextChange(currentText) {
+        this.setState(() => ({text: currentText}));
+    }
 }
 
 
