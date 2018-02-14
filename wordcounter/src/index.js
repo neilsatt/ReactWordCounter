@@ -1,3 +1,9 @@
+const SUCCESS = 'SUCCESS';
+const FAILURE = 'FAILURE';
+const WAITING = 'WAITING';
+const IDLE = 'IDLE';
+
+
 /* 
     Use a regular expression to count the words in the text area
     - return 0 if text is null or undefined
@@ -59,6 +65,18 @@ function Editor({ text, onTextChange}) {
   );
 }
 
+function makeFakeRequest() {
+    return new Promise((resolve, reject) => {
+        setTimeout(() => {
+            if(Math.random() > 0.5) {
+                resolve('Success');
+            } else {
+                reject("Failure");
+            }
+        }, 500);
+    })
+}
+
 
 
 // convert to a class 
@@ -83,6 +101,7 @@ class WordCounter extends React.Component {
               />
               <Counter count={wordCount} />
               <ProgressBar completion={progress} />
+              <SaveManager saveFunction={makeFakeRequest} data={this.state} />
             </form>
         
         );
@@ -91,6 +110,53 @@ class WordCounter extends React.Component {
     handleTextChange(currentText) {
         this.setState(() => ({text: currentText}));
     }
+}
+
+function SaveButton({ onClick }){
+    return (
+     <button className="pv2 ph3" onClick={onClick}>
+        SaveButton
+        </button>
+    );
+}
+
+function AlertBox({ status }) {
+  if (status === FAILURE) {
+    return <div className="mv2">Save failed</div>;
+  } else if (status === SUCCESS) {
+    return <div className="mv2">Save successful</div>;
+  } else if (status === WAITING) {
+    return <div className="mv2">Saving…</div>;
+  } else {
+    return null;
+  }
+}
+
+class SaveManager extends React.Component {
+  constructor() {
+    super();
+    this.save = this.save.bind(this);
+    this.state = { saveStatus: IDLE };
+  }
+    // when user clicks button 
+  save(event) {
+    event.preventDefault();
+    this.setState(() => ({ saveStatus: WAITING }));
+    this.props
+      .saveFunction(this.props.data)
+      .then(
+        success => this.setState(() => ({ saveStatus: SUCCESS })),
+        failure => this.setState(() => ({ saveStatus: FAILURE }))
+      );
+  }
+  render() {
+    return (
+      <div className="flex flex-column mv2">
+        <SaveButton onClick={this.save} />
+        <AlertBox status={this.state.saveStatus} />
+      </div>
+    );
+  }
 }
 
 
