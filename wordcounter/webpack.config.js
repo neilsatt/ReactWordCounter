@@ -1,5 +1,4 @@
 const path = require('path');
-
 module.exports = {
     entry: { app: './src/index.js' },
     output: {
@@ -12,11 +11,13 @@ module.exports = {
             {
                 test:/\.js$/,
                 include: path.resolve(__dirname, 'src'),
-                use: [babel-loader]
+                use: ['babel-loader']
             }        
         ]  
     }   
 };
+
+
 
 
 
